@@ -7,12 +7,22 @@ using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container
+//
+var MyAllowSpecificOrigins = "MyAllowedOrigins";
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DiseasContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DiseasManagementSystemConectionString")));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                      });
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opts =>
 {
@@ -48,6 +58,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("MyAllowedOrigins");
 
 app.UseHttpsRedirection();
 

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Diseas_Management_System.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MedicinesController : ControllerBase
@@ -23,6 +23,7 @@ namespace Diseas_Management_System.Controllers
         }
 
         // GET: api/Medicines
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Medicine>>> GetMedicines()
         {
@@ -49,6 +50,21 @@ namespace Diseas_Management_System.Controllers
             }
 
             return medicine;
+        }
+
+        [AllowAnonymous]
+        [HttpGet("DiseasId={DiseasId}")]
+        public async Task<ActionResult<IEnumerable<Medicine>>> GetBodyParts(int DiseasId)
+        {
+            List<Medicine> medicines = new List<Medicine>();
+
+            foreach (var row in await _context.DiseasMedicines.Where(tbl => tbl.diseasId == DiseasId).ToListAsync())
+            {
+                Medicine? medicine = await _context.Medicines.FindAsync(row.medicineId);
+                medicines.Add(medicine);
+            }
+
+            return medicines;
         }
 
         // PUT: api/Medicines/5

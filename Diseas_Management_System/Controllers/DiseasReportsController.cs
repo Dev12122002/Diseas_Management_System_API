@@ -37,10 +37,6 @@ namespace Diseas_Management_System.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DiseasReport>> GetDiseasReport(int id)
         {
-          if (_context.DiseasReports == null)
-          {
-              return NotFound();
-          }
             var diseasReport = await _context.DiseasReports.FindAsync(id);
 
             if (diseasReport == null)
@@ -95,6 +91,24 @@ namespace Diseas_Management_System.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetDiseasReport", new { id = diseasReport.diseasReportId }, diseasReport);
+        }
+
+        [HttpDelete("DiseasId={DiseasId}")]
+        public async Task<IActionResult> DeleteDiseasReportsByDiseasId(int DiseasId)
+        {
+            if (_context.DiseasBodyParts == null)
+            {
+                return NotFound();
+            }
+
+            foreach (var row in await _context.DiseasReports.Where(tbl => tbl.diseasId == DiseasId).ToListAsync())
+            {
+                _context.DiseasReports.Remove(row);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
         // DELETE: api/DiseasReports/5

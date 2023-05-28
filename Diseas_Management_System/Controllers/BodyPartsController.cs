@@ -23,6 +23,7 @@ namespace Diseas_Management_System.Controllers
         }
 
         // GET: api/BodyParts
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BodyPart>>> GetBodyParts()
         {
@@ -49,6 +50,25 @@ namespace Diseas_Management_System.Controllers
             }
 
             return bodyPart;
+        }
+
+        [AllowAnonymous]
+        [HttpGet("DiseasId={DiseasId}")]
+        public async Task<ActionResult<IEnumerable<BodyPart>>> GetBodyParts(int DiseasId)
+        {
+            List<BodyPart> bodyparts = new List<BodyPart>();
+            if (_context.DiseasBodyParts == null)
+            {
+                return NotFound();
+            }
+
+            foreach (var row in await _context.DiseasBodyParts.Where(tbl => tbl.diseasId == DiseasId).ToListAsync())
+            {
+                BodyPart? bodypart = await _context.BodyParts.FindAsync(row.bodypartId);
+                bodyparts.Add(bodypart);
+            }
+
+            return bodyparts;
         }
 
         // PUT: api/BodyParts/5

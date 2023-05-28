@@ -24,6 +24,7 @@ namespace Diseas_Management_System.Controllers
 
         // GET: api/Reports
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Report>>> GetReports()
         {
           if (_context.Reports == null)
@@ -49,6 +50,25 @@ namespace Diseas_Management_System.Controllers
             }
 
             return report;
+        }
+
+        [AllowAnonymous]
+        [HttpGet("DiseasId={DiseasId}")]
+        public async Task<ActionResult<IEnumerable<Report>>> GetBodyParts(int DiseasId)
+        {
+            List<Report> reports = new List<Report>();
+            if (_context.DiseasBodyParts == null)
+            {
+                return NotFound();
+            }
+
+            foreach (var row in await _context.DiseasReports.Where(tbl => tbl.diseasId == DiseasId).ToListAsync())
+            {
+                Report? report = await _context.Reports.FindAsync(row.reportId);
+                reports.Add(report);
+            }
+
+            return reports;
         }
 
         // PUT: api/Reports/5

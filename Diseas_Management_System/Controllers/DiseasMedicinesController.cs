@@ -97,6 +97,24 @@ namespace Diseas_Management_System.Controllers
             return CreatedAtAction("GetDiseasMedicine", new { id = diseasMedicine.diseasMedicineId }, diseasMedicine);
         }
 
+        [HttpDelete("DiseasId={DiseasId}")]
+        public async Task<IActionResult> DeleteDiseasMedicinesByDiseasId(int DiseasId)
+        {
+            if (_context.DiseasBodyParts == null)
+            {
+                return NotFound();
+            }
+
+            foreach (var row in await _context.DiseasMedicines.Where(tbl => tbl.diseasId == DiseasId).ToListAsync())
+            {
+                _context.DiseasMedicines.Remove(row);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         // DELETE: api/DiseasMedicines/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDiseasMedicine(int id)

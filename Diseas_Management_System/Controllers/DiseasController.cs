@@ -31,8 +31,8 @@ namespace Diseas_Management_System.Controllers
           {
               return NotFound();
           }
-            return await _context.Diseases.ToListAsync();
-        }
+          return await _context.Diseases.ToListAsync();
+        }  
 
         // GET: api/Diseas/5
         [AllowAnonymous]
@@ -50,12 +50,31 @@ namespace Diseas_Management_System.Controllers
                 return NotFound();
             }
 
+            //List<string> BodyParts = new List<string>();
+
+            //foreach (var row in await _context.DiseasBodyParts.Where(tbl => tbl.diseasId == id).ToListAsync())
+            //{
+            //    var bodypart = await _context.BodyParts.Where(tbl => tbl.bodypartId == row.bodypartId).ToListAsync();
+            //    BodyParts.Add(bodypart.ToString());
+            //}
+
             return diseas;
         }
 
-        // PUT: api/Diseas/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [AllowAnonymous]
+        [HttpGet("/Diseas/name={dname}")]
+        public async Task<ActionResult<IEnumerable<Diseas>>> GetDiseas(string dname)
+        {
+
+            List<Diseas> diseases = await _context.Diseases.Where(tbl => tbl.diseasName.Contains(dname)).ToListAsync();
+
+            return diseases;
+        }
+
+
+            // PUT: api/Diseas/5
+            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            [HttpPut("{id}")]
         public async Task<IActionResult> PutDiseas(int id, Diseas diseas)
         {
             if (id != diseas.diseasId)

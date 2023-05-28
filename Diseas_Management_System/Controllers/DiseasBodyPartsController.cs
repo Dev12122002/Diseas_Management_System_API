@@ -23,6 +23,7 @@ namespace Diseas_Management_System.Controllers
         }
 
         // GET: api/DiseasBodyParts
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DiseasBodyPart>>> GetDiseasBodyParts()
         {
@@ -33,14 +34,29 @@ namespace Diseas_Management_System.Controllers
             return await _context.DiseasBodyParts.ToListAsync();
         }
 
+        //[AllowAnonymous]
+        //[HttpGet("BodyParts/{DiseasId}")]
+        //public async Task<ActionResult<IEnumerable<BodyPart>>> GetBodyParts(int DiseasId)
+        //{
+        //    List<BodyPart> bodyparts = new List<BodyPart>();
+        //    if (_context.DiseasBodyParts == null)
+        //    {
+        //        return NotFound();
+        //    }
+            
+        //    foreach (var row in await _context.DiseasBodyParts.Where(tbl => tbl.diseasId == DiseasId).ToListAsync())
+        //    {
+        //        BodyPart? bodypart = await _context.BodyParts.FindAsync(row.bodypartId);
+        //        bodyparts.Add(bodypart);
+        //    }
+
+        //    return bodyparts;
+        //}
+
         // GET: api/DiseasBodyParts/5
         [HttpGet("{id}")]
         public async Task<ActionResult<DiseasBodyPart>> GetDiseasBodyPart(int id)
         {
-          if (_context.DiseasBodyParts == null)
-          {
-              return NotFound();
-          }
             var diseasBodyPart = await _context.DiseasBodyParts.FindAsync(id);
 
             if (diseasBodyPart == null)
@@ -112,6 +128,24 @@ namespace Diseas_Management_System.Controllers
             }
 
             _context.DiseasBodyParts.Remove(diseasBodyPart);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("DiseasId={DiseasId}")]
+        public async Task<IActionResult> DeleteDiseasBodyPartsByDiseasId(int DiseasId)
+        {
+            if (_context.DiseasBodyParts == null)
+            {
+                return NotFound();
+            }
+
+            foreach (var row in await _context.DiseasBodyParts.Where(tbl => tbl.diseasId == DiseasId).ToListAsync())
+            {
+                _context.DiseasBodyParts.Remove(row);
+            }
+
             await _context.SaveChangesAsync();
 
             return NoContent();
